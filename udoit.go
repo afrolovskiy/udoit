@@ -13,14 +13,13 @@ func main() {
 		log.Panic(err)
 	}
 
+	log.Printf("Authorized on account %s", bot.Self.UserName)
 	bot.Debug = true
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
-
-	u := tgbotapi.NewUpdate(0)
-	u.Timeout = 60
-
-	updates, err := bot.GetUpdatesChan(u)
+	updates, err := bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
+	if err != nil {
+		log.Panic(err)
+	}
 
 	for update := range updates {
 		if update.Message == nil {
@@ -31,6 +30,9 @@ func main() {
 
 		msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
 		msg.ReplyToMessageID = update.Message.MessageID
-		bot.Send(msg)
+		_, err = bot.Send(msg)
+		if err != nil {
+			log.Printf("failed to send messages: %s", err)
+		}
 	}
 }
