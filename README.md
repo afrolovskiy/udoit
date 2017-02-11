@@ -25,4 +25,4 @@ Now you can install it:
 ### Vendoring
 
 All external code must be vendored.
-[govendor](github.com/kardianos/govendor) used for dependency management.
+[govendor](https://github.com/kardianos/govendor) used for dependency management.
