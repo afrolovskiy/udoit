@@ -22,6 +22,22 @@ Now you can install it:
 
 ## Development
 
+### Environment
+
+[Vagrant](https://www.vagrantup.com/) can be used for setting up development environment.
+
+To create a new VM instance execute:
+
+    $ vagrant up
+
+To login trough SSH to VM machine execute:
+
+    $ vagrant ssh
+
+To run udoit execute:
+
+    $ UDOIT_API_TOKEN='changeme' go run udoit.go
+
 ### Vendoring
 
 All external code must be vendored.
