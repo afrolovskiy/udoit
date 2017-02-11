@@ -32,7 +32,7 @@ func main() {
 		msg.ReplyToMessageID = update.Message.MessageID
 		_, err = bot.Send(msg)
 		if err != nil {
-			log.Printf("failed to send messages: %s", err)
+			log.Printf("failed to send message: %s", err)
 		}
 	}
 }

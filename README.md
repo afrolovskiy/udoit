@@ -19,3 +19,10 @@ Now you can install it:
 
     $ UDOIT_API_TOKEN='changeme' udoit
     2017/02/11 15:22:58 Authorized on account udoittestbot
+
+## Development
+
+### Vendoring
+
+All external code must be vendored.
+[govendor](github.com/kardianos/govendor) used for dependency management.
