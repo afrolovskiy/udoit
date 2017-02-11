@@ -1,0 +1,14 @@
+{
+  "name": "udoit",
+  "description": "udoit telegram bot",
+  "keywords": [
+    "udoit",
+    "go",
+    "telegram",
+    "bot"
+  ],
+  "image": "heroku/go:1.6",
+  "mount_dir": "src/github.com/afrolovskiy/udoit",
+  "website": "http://github.com/afrolovskiy/udoit",
+  "repository": "http://github.com/afrolovskiy/udoit"
+}

@@ -1,2 +1,4 @@
-.vagrant/*
+.vagrant/
 *.log
+.env
+.docker_build/
