@@ -7,7 +7,7 @@
     "telegram",
     "bot"
   ],
-  "image": "heroku/go:1.6",
+  "image": "heroku/go:1.7",
   "mount_dir": "src/github.com/afrolovskiy/udoit",
   "website": "http://github.com/afrolovskiy/udoit",
   "repository": "http://github.com/afrolovskiy/udoit"
