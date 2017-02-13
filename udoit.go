@@ -10,15 +10,15 @@ import (
 func main() {
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("UDOIT_API_TOKEN"))
 	if err != nil {
-		log.Panic(err)
+		log.Panicf("failed to init bot api: %s", err)
 	}
 
-	log.Printf("Authorized on account %s", bot.Self.UserName)
+	log.Printf("authorized on account %s", bot.Self.UserName)
 	bot.Debug = true
 
 	updates, err := bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
 	if err != nil {
-		log.Panic(err)
+		log.Panicf("failed to get updates: %s", err)
 	}
 
 	for update := range updates {
