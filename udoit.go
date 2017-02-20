@@ -6,6 +6,8 @@ import (
 
 	"net/http"
 
+	"strings"
+
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -14,7 +16,7 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 
 	if webhook {
 		webhookPath := "/webhook/" + bot.Token
-		url := os.Getenv("UDOIT_BASE_URL") // without ending slash
+		url := strings.TrimSuffix(os.Getenv("UDOIT_BASE_URL"), "/")
 
 		_, err := bot.SetWebhook(tgbotapi.NewWebhook(url + webhookPath))
 		if err != nil {
