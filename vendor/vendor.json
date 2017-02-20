@@ -15,5 +15,8 @@
 			"revisionTime": "2013-10-20T00:18:33Z"
 		}
 	],
-	"rootPath": "github.com/afrolovskiy/udoit"
+	"rootPath": "github.com/afrolovskiy/udoit",
+	"heroku": {
+		"goVersion": "go1.7"
+	}
 }
