@@ -24,7 +24,9 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 		updates := bot.ListenForWebhook(webhookPath)
 
 		// don't know why nil
-		go http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+		go func() {
+			log.Fatalf("failed to bind: %s", http.ListenAndServe(":"+os.Getenv("PORT"), nil))
+		}()
 
 		return updates, nil
 	}
