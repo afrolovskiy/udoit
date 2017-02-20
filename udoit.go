@@ -16,7 +16,7 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 		webhookPath := "/webhook/" + bot.Token
 		url := os.Getenv("UDOIT_BASE_URL") // without ending slash
 
-		_, err := bot.SetWebhook(tgbotapi.NewWebhook(url + webhookPath)) // todo url
+		_, err := bot.SetWebhook(tgbotapi.NewWebhook(url + webhookPath))
 		if err != nil {
 			log.Panicf("failed to set webhook: %s", err)
 		}
