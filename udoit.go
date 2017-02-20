@@ -14,7 +14,7 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 
 	if webhook {
 		webhookPath := "/webhook/" + bot.Token
-		url := "https://pacific-fortress-88377.herokuapp.com"
+		url := os.Getenv("UDOIT_BASE_URL") // without ending slash
 
 		_, err := bot.SetWebhook(tgbotapi.NewWebhook(url + webhookPath)) // todo url
 		if err != nil {
@@ -32,8 +32,6 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 }
 
 func main() {
-	log.Print(os.Getenv("URL"))
-
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("UDOIT_API_TOKEN"))
 	if err != nil {
 		log.Panicf("failed to init bot api: %s", err)
