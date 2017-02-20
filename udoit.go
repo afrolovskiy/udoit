@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 
+	"net/http"
+
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -11,12 +13,18 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 	webhook := os.Getenv("UDOIT_WEBHOOK") != ""
 
 	if webhook {
-		_, err := bot.SetWebhook(tgbotapi.NewWebhook("")) // todo url
+		webhookPath := "/webhook/" + bot.Token
+
+		_, err := bot.SetWebhook(tgbotapi.NewWebhook(webhookPath)) // todo url
 		if err != nil {
 			log.Panicf("failed to set webhook: %s", err)
 		}
 
-		return bot.ListenForWebhook("/" + bot.Token), nil
+		updates := bot.ListenForWebhook(webhookPath)
+
+		go http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+
+		return updates, nil
 	}
 
 	return bot.GetUpdatesChan(tgbotapi.UpdateConfig{Timeout: 60})
