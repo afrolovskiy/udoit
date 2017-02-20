@@ -14,8 +14,9 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 
 	if webhook {
 		webhookPath := "/webhook/" + bot.Token
+		url := "https://pacific-fortress-88377.herokuapp.com"
 
-		_, err := bot.SetWebhook(tgbotapi.NewWebhook(webhookPath)) // todo url
+		_, err := bot.SetWebhook(tgbotapi.NewWebhook(url + webhookPath)) // todo url
 		if err != nil {
 			log.Panicf("failed to set webhook: %s", err)
 		}
