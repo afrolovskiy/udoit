@@ -22,6 +22,7 @@ func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
 
 		updates := bot.ListenForWebhook(webhookPath)
 
+		// don't know why nil
 		go http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 
 		return updates, nil
