@@ -1,5 +1,8 @@
 {
 	"comment": "",
+	"heroku": {
+		"goVersion": "go1.7"
+	},
 	"ignore": "test",
 	"package": [
 		{
@@ -9,14 +12,23 @@
 			"revisionTime": "2017-01-27T17:40:09Z"
 		},
 		{
+			"checksumSHA1": "FZem1OXCd+ogu1yeG11GMlGiGVA=",
+			"path": "github.com/lib/pq",
+			"revision": "ba5d4f7a35561e22fbdf7a39aa0070f4d460cfc0",
+			"revisionTime": "2017-02-13T22:10:49Z"
+		},
+		{
+			"checksumSHA1": "xppHi82MLqVx1eyQmbhTesAEjx8=",
+			"path": "github.com/lib/pq/oid",
+			"revision": "ba5d4f7a35561e22fbdf7a39aa0070f4d460cfc0",
+			"revisionTime": "2017-02-13T22:10:49Z"
+		},
+		{
 			"checksumSHA1": "t8jzPFIv4DNACv+cuZoigNmjPLQ=",
 			"path": "github.com/technoweenie/multipartstreamer",
 			"revision": "a90a01d73ae432e2611d178c18367fbaa13e0154",
 			"revisionTime": "2013-10-20T00:18:33Z"
 		}
 	],
-	"rootPath": "github.com/afrolovskiy/udoit",
-	"heroku": {
-		"goVersion": "go1.7"
-	}
+	"rootPath": "github.com/afrolovskiy/udoit"
 }
