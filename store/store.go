@@ -14,7 +14,7 @@ type Task struct {
 	CreatorID   int
 }
 
-const sqlCreateSequence = "CREATE SEQUENCE IF NOT EXISTS "
+const sqlCreateSequence = "CREATE SEQUENCE IF NOT EXISTS $1"
 const sqlSelectNextSeqVal = "SELECT nextval($1)"
 const sqlInsertTask = `INSERT INTO tasks (id_in_chat, chat_id, creator_id, description) ` +
 	`VALUES ($1, $2, $3, $4) RETURNING id`
@@ -27,7 +27,7 @@ func createSequenceName(chatID int64) string {
 // CreateTask ...
 func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, error) {
 	seqname := createSequenceName(chatID)
-	db.Query(sqlCreateSequence + seqname)
+	db.Query(sqlCreateSequence, seqname)
 
 	t := &Task{Description: desc, CreatorID: creatorID, ChatID: chatID}
 
