@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	addCommand  = "/add"
-	listCommand = "/list"
+	addCommand  = "add"
+	listCommand = "list"
 )
 
 func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
