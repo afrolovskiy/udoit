@@ -20,7 +20,7 @@ const sqlInsertTask = `INSERT INTO tasks (id_in_chat, chat_id, creator_id, descr
 	`VALUES ($1, $2, $3, $4) RETURNING id`
 
 func createSequenceName(chatID int64) string {
-	name := "chat_" + fmt.Sprintf("%d", chatID) + "_seq"
+	name := "\"chat_" + fmt.Sprintf("%d", chatID) + "_seq\""
 	return name
 }
 
