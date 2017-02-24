@@ -13,8 +13,10 @@ import (
 )
 
 const (
-	addCommand  = "add"
-	listCommand = "list"
+	startCmd = "start" // default startup command
+	addCmd   = "add"
+	listCmd  = "list"
+	pingCmd  = "ping" // special cmd for dev mode
 )
 
 func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
@@ -66,19 +68,19 @@ func main() {
 		message := update.Message
 		log.Printf("[%s] %s", message.From.UserName, message.Text)
 
-		cmd := message.Command()
-		switch {
-		case cmd == addCommand:
+		var msg *tgbotapi.MessageConfig
+
+		switch cmd := message.Command(); cmd {
+		case addCmd:
 			descr := strings.TrimSpace(message.CommandArguments())
 
 			t, err := store.CreateTask(dbc, descr, message.From.ID, message.Chat.ID)
 			if err != nil {
 				log.Fatalf("failed to add task: %s", err)
 			}
-
 			log.Printf("created task: %#v", t)
 
-		case cmd == listCommand:
+		case listCmd:
 			tasks, err := store.ListTasks(dbc, message.Chat.ID)
 			if err != nil {
 				log.Fatalf("failed to get tasks: %s", err)
@@ -89,16 +91,25 @@ func main() {
 				descrs = append(descrs, t.Description)
 			}
 
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, strings.Join(descrs, "\n"))
-			if _, err = bot.Send(msg); err != nil {
-				log.Printf("failed to send message: %s", err)
-			}
+			tmp := tgbotapi.NewMessage(message.Chat.ID, strings.Join(descrs, "\n"))
+			msg = &tmp
+
+		case startCmd:
+			tmp := tgbotapi.NewMessage(message.Chat.ID, "Hello! I am \"U do it\" bot")
+			msg = &tmp
+
+		case pingCmd:
+			tmp := tgbotapi.NewMessage(message.Chat.ID, "I'm OK!")
+			msg = &tmp
 
 		default:
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-			msg.ReplyToMessageID = update.Message.MessageID
-			_, err = bot.Send(msg)
-			if err != nil {
+			continue
+		}
+
+		// send msg at the end
+
+		if msg != nil {
+			if _, err = bot.Send(msg); err != nil {
 				log.Printf("failed to send message: %s", err)
 			}
 		}
