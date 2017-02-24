@@ -5,27 +5,28 @@ import "database/sql"
 // Task ...
 type Task struct {
 	ID          int
+	ChatID      int64
 	Description string
 	CreatorID   int
 }
 
-const sqlInsertTask = `INSERT INTO tasks (description, creator_id) ` +
-	`VALUES ($1, $2) RETURNING id`
+const sqlInsertTask = `INSERT INTO tasks (description, creator_id, chat_id) ` +
+	`VALUES ($1, $2, $3) RETURNING id`
 
 // CreateTask ...
-func CreateTask(db *sql.DB, descr string, creatorID int) (*Task, error) {
-	t := &Task{Description: descr, CreatorID: creatorID}
-	row := db.QueryRow(sqlInsertTask, t.Description, t.CreatorID)
+func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, error) {
+	t := &Task{Description: desc, CreatorID: creatorID, ChatID: chatID}
+	row := db.QueryRow(sqlInsertTask, t.Description, t.CreatorID, t.ChatID)
 	err := row.Scan(&t.ID)
 	return t, err
 }
 
 const sqlSelectTasks = `SELECT id, description, creator_id FROM tasks ` +
-	`WHERE creator_id = $1`
+	`WHERE chat_id = $1`
 
 // ListTasks ...
-func ListTasks(db *sql.DB, userID int) ([]Task, error) {
-	rows, err := db.Query(sqlSelectTasks, userID)
+func ListTasks(db *sql.DB, chatID int64) ([]Task, error) {
+	rows, err := db.Query(sqlSelectTasks, chatID)
 	if err != nil {
 		return nil, err
 	}

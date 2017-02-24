@@ -44,6 +44,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to connect to database: %s", err)
 	}
+	dbc.SetMaxOpenConns(20) // because heroku limits
 
 	bot, err := tgbotapi.NewBotAPI(os.Getenv("UDOIT_API_TOKEN"))
 	if err != nil {
@@ -62,24 +63,23 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
+		message := update.Message
+		log.Printf("[%s] %s", message.From.UserName, message.Text)
 
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
-		t := update.Message.Text
+		cmd := message.Command()
 		switch {
-		case strings.HasPrefix(t, addCommand):
-			descr := strings.TrimSpace(
-				strings.TrimPrefix(t[len(addCommand):], "@"+bot.Self.UserName))
+		case cmd == addCommand:
+			descr := strings.TrimSpace(message.CommandArguments())
 
-			t, err := store.CreateTask(dbc, descr, update.Message.From.ID)
+			t, err := store.CreateTask(dbc, descr, message.From.ID, message.Chat.ID)
 			if err != nil {
 				log.Fatalf("failed to add task: %s", err)
 			}
 
 			log.Printf("created task: %#v", t)
 
-		case strings.HasPrefix(t, listCommand):
-			tasks, err := store.ListTasks(dbc, update.Message.From.ID)
+		case cmd == listCommand:
+			tasks, err := store.ListTasks(dbc, message.Chat.ID)
 			if err != nil {
 				log.Fatalf("failed to get tasks: %s", err)
 			}
