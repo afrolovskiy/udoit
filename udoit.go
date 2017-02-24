@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -88,7 +89,8 @@ func main() {
 
 			descrs := make([]string, 0, len(tasks))
 			for _, t := range tasks {
-				descrs = append(descrs, t.Description)
+				taskStr := fmt.Sprintf("%d", t.IDinchat) + " " + t.Description
+				descrs = append(descrs, taskStr)
 			}
 
 			tmp := tgbotapi.NewMessage(message.Chat.ID, strings.Join(descrs, "\n"))

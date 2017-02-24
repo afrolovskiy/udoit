@@ -1,27 +1,45 @@
 package store
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 // Task ...
 type Task struct {
 	ID          int
+	IDinchat    int
 	ChatID      int64
 	Description string
 	CreatorID   int
 }
 
-const sqlInsertTask = `INSERT INTO tasks (description, creator_id, chat_id) ` +
-	`VALUES ($1, $2, $3) RETURNING id`
+const sqlCreateSequence = "CREATE SEQUENCE IF NOT EXISTS "
+const sqlSelectNextSeqVal = "SELECT nextval($1)"
+const sqlInsertTask = `INSERT INTO tasks (id_in_chat, chat_id, creator_id, description) ` +
+	`VALUES ($1, $2, $3, $4) RETURNING id`
+
+func createSequenceName(chatID int64) string {
+	name := "chat_" + fmt.Sprintf("%d", chatID) + "_seq"
+	return name
+}
 
 // CreateTask ...
 func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, error) {
+	seqname := createSequenceName(chatID)
+	db.Query(sqlCreateSequence + seqname)
+
 	t := &Task{Description: desc, CreatorID: creatorID, ChatID: chatID}
-	row := db.QueryRow(sqlInsertTask, t.Description, t.CreatorID, t.ChatID)
-	err := row.Scan(&t.ID)
+
+	rowSeq := db.QueryRow(sqlSelectNextSeqVal, seqname)
+	rowSeq.Scan(&t.IDinchat)
+
+	rowTask := db.QueryRow(sqlInsertTask, t.IDinchat, t.ChatID, t.CreatorID, t.Description)
+	err := rowTask.Scan(&t.ID)
 	return t, err
 }
 
-const sqlSelectTasks = `SELECT id, description, creator_id FROM tasks ` +
+const sqlSelectTasks = `SELECT id_in_chat, description, creator_id FROM tasks ` +
 	`WHERE chat_id = $1`
 
 // ListTasks ...
@@ -34,7 +52,7 @@ func ListTasks(db *sql.DB, chatID int64) ([]Task, error) {
 	var tasks []Task
 	for rows.Next() {
 		t := Task{}
-		err = rows.Scan(&t.ID, &t.Description, &t.CreatorID)
+		err = rows.Scan(&t.IDinchat, &t.Description, &t.CreatorID)
 		if err != nil {
 			return nil, err
 		}
