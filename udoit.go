@@ -92,7 +92,7 @@ func main() {
 			if len(tasks) > 0 {
 				descrs := make([]string, 0, len(tasks))
 				for _, t := range tasks {
-					taskStr := fmt.Sprintf("%d", t.IDinchat) + " " + t.Description
+					taskStr := "#" + fmt.Sprintf("%d", t.IDinchat) + " " + t.Description
 					descrs = append(descrs, taskStr)
 				}
 				msgText = strings.Join(descrs, "\n")
