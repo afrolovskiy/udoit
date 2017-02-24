@@ -87,13 +87,20 @@ func main() {
 				log.Fatalf("failed to get tasks: %s", err)
 			}
 
-			descrs := make([]string, 0, len(tasks))
-			for _, t := range tasks {
-				taskStr := fmt.Sprintf("%d", t.IDinchat) + " " + t.Description
-				descrs = append(descrs, taskStr)
+			var msgText string
+
+			if len(tasks) > 0 {
+				descrs := make([]string, 0, len(tasks))
+				for _, t := range tasks {
+					taskStr := fmt.Sprintf("%d", t.IDinchat) + " " + t.Description
+					descrs = append(descrs, taskStr)
+				}
+				msgText = strings.Join(descrs, "\n")
+			} else {
+				msgText = "No current tasks"
 			}
 
-			tmp := tgbotapi.NewMessage(message.Chat.ID, strings.Join(descrs, "\n"))
+			tmp := tgbotapi.NewMessage(message.Chat.ID, msgText)
 			msg = &tmp
 
 		case startCmd:
