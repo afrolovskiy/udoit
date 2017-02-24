@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     id_in_chat int NOT NULL,
     chat_id bigint NOT NULL,
     creator_id int NOT NULL,
-    assignee_id int
+    assignee_id int,
     description text NOT NULL,
     UNIQUE(chat_id, id_in_chat)
 );
