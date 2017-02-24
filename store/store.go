@@ -39,6 +39,12 @@ func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, er
 	return t, err
 }
 
+const sqlDeleteTask = "DELETE FROM tasks WHERE chat_id = $1 AND id_in_chat = $2"
+
+func DeleteTask(db *sql.DB, chatID int64, ID int) {
+	db.Query(sqlDeleteTask, chatID, ID)
+}
+
 const sqlSelectTasks = `SELECT id_in_chat, description, creator_id FROM tasks ` +
 	`WHERE chat_id = $1`
 

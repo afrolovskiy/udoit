@@ -8,16 +8,19 @@ import (
 	"os"
 	"strings"
 
+	"strconv"
+
 	"github.com/afrolovskiy/udoit/store"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 	_ "github.com/lib/pq" // for postgres
 )
 
 const (
-	startCmd = "start" // default startup command
-	addCmd   = "add"
-	listCmd  = "list"
-	pingCmd  = "ping" // special cmd for dev mode
+	addCmd    = "add"
+	deleteCmd = "delete"
+	listCmd   = "list"
+	pingCmd   = "ping"  // special cmd for dev mode
+	startCmd  = "start" // default startup command
 )
 
 func getUpdatesChan(bot *tgbotapi.BotAPI) (tgbotapi.UpdatesChannel, error) {
@@ -73,9 +76,9 @@ func main() {
 
 		switch cmd := message.Command(); cmd {
 		case addCmd:
-			descr := strings.TrimSpace(message.CommandArguments())
+			desc := strings.TrimSpace(message.CommandArguments())
 
-			t, err := store.CreateTask(dbc, descr, message.From.ID, message.Chat.ID)
+			t, err := store.CreateTask(dbc, desc, message.From.ID, message.Chat.ID)
 			if err != nil {
 				log.Fatalf("failed to add task: %s", err)
 			}
@@ -90,18 +93,30 @@ func main() {
 			var msgText string
 
 			if len(tasks) > 0 {
-				descrs := make([]string, 0, len(tasks))
+				descs := make([]string, 0, len(tasks))
 				for _, t := range tasks {
 					taskStr := "#" + fmt.Sprintf("%d", t.IDinchat) + " " + t.Description
-					descrs = append(descrs, taskStr)
+					descs = append(descs, taskStr)
 				}
-				msgText = strings.Join(descrs, "\n")
+				msgText = strings.Join(descs, "\n")
 			} else {
 				msgText = "No current tasks"
 			}
 
 			tmp := tgbotapi.NewMessage(message.Chat.ID, msgText)
 			msg = &tmp
+
+		case deleteCmd:
+			// todo use regexp to extract number
+			arg := message.CommandArguments()
+
+			if id, err := strconv.Atoi(arg); err != nil {
+				log.Print("/delete no number")
+			} else {
+				store.DeleteTask(dbc, message.Chat.ID, id)
+				tmp := tgbotapi.NewMessage(message.Chat.ID, "Task "+fmt.Sprintf("%d", id)+" deleted")
+				msg = &tmp
+			}
 
 		case startCmd:
 			tmp := tgbotapi.NewMessage(message.Chat.ID, "Hello! I am \"U do it\" bot")
