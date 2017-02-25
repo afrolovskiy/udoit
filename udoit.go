@@ -103,6 +103,8 @@ func main() {
 				log.Fatalf("failed to add task: %s", err)
 			}
 			log.Printf("created task: %#v", t)
+			tmp := tgbotapi.NewMessage(message.Chat.ID, "Task "+fmt.Sprintf("%d", t.IDinchat)+" created")
+			msg = &tmp
 
 		case listCmd:
 			var tasks []store.Task
