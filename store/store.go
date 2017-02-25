@@ -12,6 +12,7 @@ type Task struct {
 	ChatID      int64
 	Description string
 	CreatorID   int
+	AssigneeID  int
 }
 
 const sqlCreateSequence = "CREATE SEQUENCE IF NOT EXISTS "
