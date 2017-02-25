@@ -58,12 +58,24 @@ func main() {
 	}
 
 	log.Printf("authorized on account %s", bot.Self.UserName)
-	bot.Debug = true
+	bot.Debug = true // what for?
 
 	updates, err := getUpdatesChan(bot)
 	if err != nil {
 		log.Panicf("failed to get updates: %s", err)
 	}
+
+	sigs := make(chan os.Signal, 1)
+	go func() {
+		sig := <-sigs
+		if sig.String() == "SIGTERM" {
+			if os.Getenv("UDOIT_WEBHOOK") != "" {
+				if _, err = bot.RemoveWebhook(); err != nil {
+					log.Printf("failed to remove webhook %s", err)
+				}
+			}
+		}
+	}()
 
 	for update := range updates {
 		if update.Message == nil {
