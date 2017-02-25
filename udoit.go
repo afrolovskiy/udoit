@@ -78,6 +78,8 @@ func main() {
 					log.Printf("failed to remove webhook %s", err)
 				}
 			}
+
+			os.Exit(0)
 		}
 	}()
 
