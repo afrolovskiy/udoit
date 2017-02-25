@@ -105,7 +105,13 @@ func main() {
 			log.Printf("created task: %#v", t)
 
 		case listCmd:
-			tasks, err := store.ListTasks(dbc, message.Chat.ID)
+			var tasks []store.Task
+			var err error
+			if message.Chat.IsPrivate() {
+				tasks, err = store.UserTasks(dbc, message.From.ID)
+			} else {
+				tasks, err = store.ChatTasks(dbc, message.Chat.ID)
+			}
 			if err != nil {
 				log.Fatalf("failed to get tasks: %s", err)
 			}

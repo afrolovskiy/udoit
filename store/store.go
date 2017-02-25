@@ -41,6 +41,7 @@ func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, er
 
 const sqlDeleteTask = "DELETE FROM tasks WHERE chat_id = $1 AND id_in_chat = $2"
 
+// DeleteTask ...
 func DeleteTask(db *sql.DB, chatID int64, ID int) {
 	db.Query(sqlDeleteTask, chatID, ID)
 }
@@ -48,8 +49,8 @@ func DeleteTask(db *sql.DB, chatID int64, ID int) {
 const sqlSelectTasks = `SELECT id_in_chat, description, creator_id FROM tasks ` +
 	`WHERE chat_id = $1`
 
-// ListTasks ...
-func ListTasks(db *sql.DB, chatID int64) ([]Task, error) {
+// ChatTasks ...
+func ChatTasks(db *sql.DB, chatID int64) ([]Task, error) {
 	rows, err := db.Query(sqlSelectTasks, chatID)
 	if err != nil {
 		return nil, err
@@ -67,4 +68,25 @@ func ListTasks(db *sql.DB, chatID int64) ([]Task, error) {
 
 	err = rows.Err()
 	return tasks, err
+}
+
+const sqlSelectUserTasks = sqlSelectTasks + " OR assignee_id = $2"
+
+// UserTasks ...
+func UserTasks(db *sql.DB, userID int) ([]Task, error) {
+	rows, err := db.Query(sqlSelectUserTasks, userID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	var tasks []Task
+	for rows.Next() {
+		t := Task{}
+		err = rows.Scan(&t.IDinchat, &t.Description, &t.CreatorID)
+		if err != nil {
+			return nil, err
+		}
+		tasks = append(tasks, t)
+	}
+	return tasks, nil
 }
