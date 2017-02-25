@@ -69,6 +69,10 @@ func main() {
 	go func() {
 		sig := <-sigs
 		if sig.String() == "SIGTERM" {
+			log.Print("SIGTERM comming")
+
+			dbc.Close()
+
 			if os.Getenv("UDOIT_WEBHOOK") != "" {
 				if _, err = bot.RemoveWebhook(); err != nil {
 					log.Printf("failed to remove webhook %s", err)
