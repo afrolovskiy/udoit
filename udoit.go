@@ -6,9 +6,12 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
 
 	"strconv"
+
+	"syscall"
 
 	"github.com/afrolovskiy/udoit/store"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
@@ -66,21 +69,20 @@ func main() {
 	}
 
 	sigs := make(chan os.Signal, 1)
+	signal.Notify(sigs, syscall.SIGTERM)
 	go func() {
 		sig := <-sigs
-		if sig.String() == "SIGTERM" {
-			log.Print("SIGTERM comming")
+		log.Printf("Signal comming %s", sig)
 
-			dbc.Close()
+		dbc.Close()
 
-			if os.Getenv("UDOIT_WEBHOOK") != "" {
-				if _, err = bot.RemoveWebhook(); err != nil {
-					log.Printf("failed to remove webhook %s", err)
-				}
+		if os.Getenv("UDOIT_WEBHOOK") != "" {
+			if _, err = bot.RemoveWebhook(); err != nil {
+				log.Printf("failed to remove webhook %s", err)
 			}
-
-			os.Exit(0)
 		}
+
+		os.Exit(0)
 	}()
 
 	for update := range updates {
