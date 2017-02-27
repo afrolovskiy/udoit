@@ -8,7 +8,7 @@ import (
 // Task ...
 type Task struct {
 	ID          int
-	IDinchat    int
+	IDInChat    int
 	ChatID      int64
 	Description string
 	CreatorID   int
@@ -33,9 +33,9 @@ func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, er
 	t := &Task{Description: desc, CreatorID: creatorID, ChatID: chatID}
 
 	rowSeq := db.QueryRow(sqlSelectNextSeqVal, seqname)
-	rowSeq.Scan(&t.IDinchat)
+	rowSeq.Scan(&t.IDInChat)
 
-	rowTask := db.QueryRow(sqlInsertTask, t.IDinchat, t.ChatID, t.CreatorID, t.Description)
+	rowTask := db.QueryRow(sqlInsertTask, t.IDInChat, t.ChatID, t.CreatorID, t.Description)
 	err := rowTask.Scan(&t.ID)
 	return t, err
 }
@@ -43,8 +43,9 @@ func CreateTask(db *sql.DB, desc string, creatorID int, chatID int64) (*Task, er
 const sqlDeleteTask = "DELETE FROM tasks WHERE chat_id = $1 AND id_in_chat = $2"
 
 // DeleteTask ...
-func DeleteTask(db *sql.DB, chatID int64, ID int) {
-	db.Query(sqlDeleteTask, chatID, ID)
+func DeleteTask(db *sql.DB, chatID int64, ID int) error {
+	_, err := db.Exec(sqlDeleteTask, chatID, ID)
+	return err
 }
 
 const sqlSelectTasks = `SELECT id_in_chat, description, creator_id FROM tasks ` +
@@ -60,7 +61,7 @@ func ChatTasks(db *sql.DB, chatID int64) ([]Task, error) {
 	var tasks []Task
 	for rows.Next() {
 		t := Task{}
-		err = rows.Scan(&t.IDinchat, &t.Description, &t.CreatorID)
+		err = rows.Scan(&t.IDInChat, &t.Description, &t.CreatorID)
 		if err != nil {
 			return nil, err
 		}
@@ -83,7 +84,7 @@ func UserTasks(db *sql.DB, userID int) ([]Task, error) {
 	var tasks []Task
 	for rows.Next() {
 		t := Task{}
-		err = rows.Scan(&t.IDinchat, &t.Description, &t.CreatorID)
+		err = rows.Scan(&t.IDInChat, &t.Description, &t.CreatorID)
 		if err != nil {
 			return nil, err
 		}
